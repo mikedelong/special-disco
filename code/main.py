@@ -2,6 +2,9 @@ import logging
 import time
 
 import tensorflow as tf
+import tensorlayer as tl
+
+import data
 
 start_time = time.time()
 
@@ -14,6 +17,22 @@ if __name__ == '__main__':
     logger.addHandler(console_handler)
     console_handler.setLevel(logging.DEBUG)
     logger.debug('started')
+
+    metadata, idx_q, idx_a = data.load_data(PATH='data/twitter/')
+    (trainX, trainY), (testX, testY), (validX, validY) = data.split_dataset(idx_q, idx_a)
+    trainX = trainX.tolist()
+    trainY = trainY.tolist()
+    testX = testX.tolist()
+    testY = testY.tolist()
+    validX = validX.tolist()
+    validY = validY.tolist()
+
+    trainX = tl.prepro.remove_pad_sequences(trainX)
+    trainY = tl.prepro.remove_pad_sequences(trainY)
+    testX = tl.prepro.remove_pad_sequences(testX)
+    testY = tl.prepro.remove_pad_sequences(testY)
+    validX = tl.prepro.remove_pad_sequences(validX)
+    validY = tl.prepro.remove_pad_sequences(validY)
 
     with tf.Session() as session:
         session.run(tf.global_variables_initializer())
